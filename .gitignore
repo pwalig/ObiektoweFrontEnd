@@ -1,0 +1,4 @@
+# exclude everything except .java files
+*
+!*/
+!*.java
