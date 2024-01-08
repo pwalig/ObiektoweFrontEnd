@@ -1,10 +1,10 @@
-package main_game;
+package game.maingame;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import aplication.LabeledComponent;
-import aplication.LabeledComponent.LabelPosition;
+import game.application.LabeledComponent;
+import game.application.LabeledComponent.LabelPosition;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;

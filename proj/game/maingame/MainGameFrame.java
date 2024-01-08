@@ -1,4 +1,4 @@
-package main_game;
+package game.maingame;
 import javax.swing.*;
 import java.awt.*;
 //import java.awt.event.*;

@@ -1,11 +1,11 @@
-package aplication;
+package game.application;
 import javax.swing.*;
 
-import main_game.*;
+import game.maingame.*;
+import game.uttt.*;
 
 import java.awt.*;
 import java.awt.event.*;
-import uttt.*;
 
 public class MainFrame extends JFrame {
      public MainFrame() {

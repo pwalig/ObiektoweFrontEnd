@@ -1,4 +1,4 @@
-package uttt;
+package game.uttt;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
