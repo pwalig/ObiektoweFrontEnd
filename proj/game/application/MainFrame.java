@@ -1,8 +1,7 @@
 package game.application;
 import javax.swing.*;
 
-import game.maingame.*;
-import game.maingame.frames.MainGameMainMenuFrame;
+import game.maingame.frames.MainGameFrame;
 import game.uttt.*;
 
 import java.awt.*;
@@ -36,7 +35,7 @@ public class MainFrame extends JFrame {
         mgb.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new MainGameMainMenuFrame();
+                new MainGameFrame();
             }
         });
 
