@@ -1,6 +1,5 @@
 # exclude everything except .java files
 *
 !*/
-!proj/game/maingame/frames/*.java
-!proj/*.java
+!proj/**/*.java
 proj/game/application/TestMain.java

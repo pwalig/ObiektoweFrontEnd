@@ -7,25 +7,26 @@ import game.application.LabeledComponent;
 import java.awt.event.*;
 import java.awt.*;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 
 public class EditFrame extends JDialog {
 
-	public EditFrame(JFrame owner, Object o) {
+	public EditFrame(JFrame owner, BoardField host) {
 		// setup
 		super(owner, "Edit Being");
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		Object o = host.being;
 
 		// fields
-		JPanel fieldsPanel = new JPanel(new GridLayout(0, 1));
-		Field[] fields = o.getClass().getDeclaredFields();
-		JTextField[] tfs = new JTextField[fields.length];
-
-		/* 
-		for(Class cls = o.getClass(); cls!=null; cls = cls.getSuperclass()) {
+		ArrayList<Field> tempFields = new ArrayList<>();
+		for(Class<?> cls = o.getClass(); cls!=null && cls!=Object.class; cls = cls.getSuperclass()) {
 			for(Field field : cls.getDeclaredFields()) {
-				
+				tempFields.add(field);
 			}
-		}*/
+		}
+		Field[] fields = tempFields.toArray(new Field[tempFields.size()]);
+		JTextField[] tfs = new JTextField[fields.length];
+		JPanel fieldsPanel = new JPanel(new GridLayout(0, 1));
 
 		for (int i = 0; i < fields.length; i++){
 			try {
@@ -70,8 +71,17 @@ public class EditFrame extends JDialog {
 				dispose();
 			}
 		});
+		JButton changeType = new JButton("change type");
+		changeType.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e){
+				new ChoseFrame(owner, host);
+				dispose();
+			}
+		});
 		actions.add(confirm);
 		actions.add(cancel);
+		actions.add(changeType);
 
 		// compose
 		add(BorderLayout.CENTER, fieldsPanel);
