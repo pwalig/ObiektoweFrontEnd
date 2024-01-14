@@ -17,27 +17,16 @@ public class BoardField extends JButton {
     ButtonState buttonState = ButtonState.UNLOCKED;
     String fieldContent;
 
-    public void ChangeBeingType(Class<?> clazz){
-        Object o;
-        try {
-            o = clazz.getConstructor().newInstance(new Object[] {});
-            being = (Being)o;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     public BoardField(int _x, int _y, JFrame owner){
         super();
         x = _x;
         y = _y;
-        being = null;
+        being = new Being();
         BoardField bf = this;
         addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (being == null) new ChoseFrame(owner, bf);
-                else new EditFrame(owner, bf);
+                new EditFrame(owner, bf);
             }
         });
     }

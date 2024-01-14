@@ -3,6 +3,8 @@ package game.maingame.frames;
 import javax.swing.*;
 
 import game.application.LabeledComponent;
+import game.maingame.GameUtils;
+import game.maingame.beings.armours.Armour;
 
 import java.awt.event.*;
 import java.awt.*;
@@ -11,13 +13,25 @@ import java.util.ArrayList;
 
 public class EditFrame extends JDialog {
 
-	public EditFrame(JFrame owner, BoardField host) {
-		// setup
-		super(owner, "Edit Being");
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		Object o = host.being;
+	private void applyField(Field field, JTextField tf, Object o){
+		Class<?> type = field.getType();
+		if (type == int.class) {
+			int val = 0;
+			try {val = Integer.parseInt(tf.getText());}
+			catch (NumberFormatException ex) {}
+			try {field.setInt(o, val);}
+			catch (Exception e1) {e1.printStackTrace();}
+		}
+		else if (type == double.class){
+			double val = 0.0;
+			try {Double.parseDouble(tf.getText());}
+			catch (Exception e) {}
+			try {field.setDouble(o, val);}
+			catch (Exception e1) {e1.printStackTrace();}
+		}
+	}
 
-		// fields
+	private void addArmourFields(Object o, JPanel panel){
 		ArrayList<Field> tempFields = new ArrayList<>();
 		for(Class<?> cls = o.getClass(); cls!=null && cls!=Object.class; cls = cls.getSuperclass()) {
 			for(Field field : cls.getDeclaredFields()) {
@@ -26,64 +40,127 @@ public class EditFrame extends JDialog {
 		}
 		Field[] fields = tempFields.toArray(new Field[tempFields.size()]);
 		JTextField[] tfs = new JTextField[fields.length];
-		JPanel fieldsPanel = new JPanel(new GridLayout(0, 1));
 
 		for (int i = 0; i < fields.length; i++){
+			if (Armour[].class.isAssignableFrom(fields[i].getType())){
+				try {
+					addArmourFields(fields[i].get(o), panel);
+				} catch (IllegalArgumentException | IllegalAccessException e) {
+					e.printStackTrace();
+				}
+				continue;
+			}
 			try {
-				Field f = fields[i];
-				f.setAccessible(true);
+				fields[i].setAccessible(true);
 				tfs[i] = new JTextField(fields[i].get(o).toString());
-				fieldsPanel.add(new LabeledComponent(tfs[i], fields[i].getName()));
+
+				// on value change
+				Field f = fields[i];
+				JTextField tf = tfs[i];
+				tf.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e){
+						applyField(f, tf, o);
+					}
+				});
+
+				// add to panel
+				panel.add(new LabeledComponent(tfs[i], fields[i].getName()));
+
 			} catch (Exception e){
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public EditFrame(JFrame owner, BoardField host) {
+		// setup
+		super(owner, "Edit Being");
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+
+		// fields
+		JPanel fieldsPanel = new JPanel(new GridLayout(0, 1));
+		ArrayList<Field> tempFields = new ArrayList<>();
+		for(Class<?> cls = host.being.getClass(); cls!=null && cls!=Object.class; cls = cls.getSuperclass()) {
+			for(Field field : cls.getDeclaredFields()) {
+				tempFields.add(field);
+			}
+		}
+		Field[] fields = tempFields.toArray(new Field[tempFields.size()]);
+		JTextField[] tfs = new JTextField[fields.length];
+
+		for (int i = 0; i < fields.length; i++){
+			if (Armour.class.isAssignableFrom(fields[i].getType())){
+				try {
+					fieldsPanel.add(new JLabel(fields[i].getName()));
+					addArmourFields(fields[i].get(host.being), fieldsPanel);
+				} catch (IllegalArgumentException | IllegalAccessException e) {
+					e.printStackTrace();
+				}
+				continue;
+			}
+
+			try {
+				fields[i].setAccessible(true);
+				tfs[i] = new JTextField(fields[i].get(host.being).toString());
+
+				// on value change
+				Field f = fields[i];
+				JTextField tf = tfs[i];
+				tf.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e){
+						applyField(f, tf, host.being);
+					}
+				});
+
+				// add to panel
+				fieldsPanel.add(new LabeledComponent(tfs[i], fields[i].getName()));
+
+			} catch (Exception e){
+				e.printStackTrace();
+			}
+		}
+		
+		// type
+		String[] typesList = GameUtils.getBeingClassesNames();
+		JComboBox<String> unitTypeDropdown = new JComboBox<String>(typesList);
+		unitTypeDropdown.setSelectedItem(host.being.getClass().getName());
+
+        unitTypeDropdown.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e){
+                try {
+					host.being = GameUtils.getNewBeingOfType(Class.forName(unitTypeDropdown.getSelectedItem().toString()));
+					for (int i = 0; i < fields.length; i++){
+						applyField(fields[i], tfs[i], host.being);
+					}
+				} catch (ClassNotFoundException e1) {
+					e1.printStackTrace();
+				}
+                new EditFrame(owner, host);
+				dispose();
+			}
+		});
 
 		// actions
 		JPanel actions = new JPanel(new GridLayout(1, 0));
-		JButton confirm = new JButton("confirm");
+		JButton confirm = new JButton("ok");
 		confirm.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e){
 				for (int i = 0; i < fields.length; i++){
-					int val;
-					try {
-						val = Integer.parseInt(tfs[i].getText());
-					}
-					catch (NumberFormatException ex) {
-						val = 0;
-					}
-					try {
-						fields[i].setInt(o, val);
-					} catch (IllegalArgumentException e1) {
-						e1.printStackTrace();
-					} catch (IllegalAccessException e1) {
-						e1.printStackTrace();
-					}
+					applyField(fields[i], tfs[i], host.being);
 				}
+				System.out.print(host.being.getClass().getName());
 				dispose();
 			}
 		});
-		JButton cancel = new JButton("cancel");
-		cancel.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e){
-				dispose();
-			}
-		});
-		JButton changeType = new JButton("change type");
-		changeType.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e){
-				new ChoseFrame(owner, host);
-				dispose();
-			}
-		});
+
 		actions.add(confirm);
-		actions.add(cancel);
-		actions.add(changeType);
 
 		// compose
+		add(BorderLayout.NORTH, unitTypeDropdown);
 		add(BorderLayout.CENTER, fieldsPanel);
 		add(BorderLayout.SOUTH, actions);
 		pack();
