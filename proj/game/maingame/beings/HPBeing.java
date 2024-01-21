@@ -17,15 +17,6 @@ public class HPBeing extends Being {
         armour = new ConstArmour();
     }
 
-    public HPBeing(Being being){
-        super(being);
-    }
-
-    public HPBeing(HPBeing another){
-        super(another);
-        this.hp = another.hp;
-    }
-
     
     public HPBeing(JSONObject j){
         super(j);
@@ -50,7 +41,7 @@ public class HPBeing extends Being {
     public JSONObject toJSONObject(){
         JSONObject j = super.toJSONObject();
         j.remove("type");
-        j.put("type", 'h');
+        j.put("type", getTypeChar());
         j.put("hp", this.hp);
         j.put("armour", this.armour.toJSONObject());
         return j;

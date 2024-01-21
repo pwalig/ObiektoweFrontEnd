@@ -11,11 +11,6 @@ public class Being implements JSONAble {
         priority = 10;
     }
 
-    public Being(Being another){
-        this.owner = another.owner;
-        this.priority = another.priority;
-    }
-
     public Being(JSONObject j){
         owner = j.getInt("owner");
         priority = j.getInt("priority");
@@ -23,7 +18,7 @@ public class Being implements JSONAble {
 
     public JSONObject toJSONObject(){
         JSONObject j = new JSONObject();
-        j.put("type", 'b');
+        j.put("type", getTypeChar());
         j.put("owner", this.owner);
         j.put("priority", this.priority);
         return j;

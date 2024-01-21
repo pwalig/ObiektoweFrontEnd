@@ -12,6 +12,7 @@ import org.json.JSONObject;
 
 import game.maingame.beings.Being;
 import game.maingame.beings.HPBeing;
+import game.maingame.beings.MoveAble;
 
 public class GameUtils {
 
@@ -19,7 +20,8 @@ public class GameUtils {
 
     public static Class<?>[] beingClasses = {
         Being.class,
-        HPBeing.class
+        HPBeing.class,
+        MoveAble.class
     };
 
     public static String[] getBeingClassesNames (){

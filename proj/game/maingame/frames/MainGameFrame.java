@@ -36,6 +36,9 @@ public class MainGameFrame extends JFrame {
         JButton export = new JButton("Export");
         JButton exportJSON = new JButton("Export JSON");
         JButton importJSON = new JButton("Import JSON");
+        JButton previous = new JButton("previous");
+        JButton next = new JButton("next");
+        JLabel frameNo = new JLabel("0", SwingConstants.CENTER);
         JButton simulate = new JButton("Simulate");
 
         Board board = new Board(this);
@@ -104,6 +107,42 @@ public class MainGameFrame extends JFrame {
             }
         });
 
+        previous.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int newFrameNo = Integer.valueOf(frameNo.getText()).intValue() - 1;
+                if (newFrameNo < 0) newFrameNo = 0;
+                frameNo.setText(String.valueOf(newFrameNo));
+                JSONObject j = GameUtils.ImportJSONObject("sim/" + frameNo.getText() + ".json");
+                board.importJSON(j);
+            }
+        });
+        next.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int newFrameNo = Integer.valueOf(frameNo.getText()).intValue() + 1;
+                frameNo.setText(String.valueOf(newFrameNo));
+                JSONObject j = GameUtils.ImportJSONObject("sim/" + frameNo.getText() + ".json");
+                board.importJSON(j);
+            }
+        });
+        simulate.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ArrayList<String> args = new ArrayList<String>();
+                args.add ("./backend.exe"); // command name
+                //args.add (); // optional args added as separate list items
+                ProcessBuilder pb = new ProcessBuilder (args);
+                Process p;
+                try {
+                    p = pb.start();
+                    p.waitFor();
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
+
         JPanel actions = new JPanel(new GridLayout(0, 1));
         actions.add(levels);
         actions.add(clearBoard);
@@ -111,6 +150,13 @@ public class MainGameFrame extends JFrame {
         actions.add(new LabeledComponent(boardSize, "Board Size: ", LabelPosition.LEFT));
         actions.add(export);
         actions.add(exportJSON);
+        actions.add(importJSON);
+
+        JPanel simPlayer = new JPanel(new GridLayout(1, 3));
+        simPlayer.add(previous);
+        simPlayer.add(frameNo);
+        simPlayer.add(next);
+        actions.add(simPlayer);
         actions.add(importJSON);
         actions.add(simulate);
 
