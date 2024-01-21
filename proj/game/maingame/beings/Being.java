@@ -28,4 +28,8 @@ public class Being implements JSONAble {
         j.put("priority", this.priority);
         return j;
     }
+
+    public char getTypeChar() {
+        return 'b';
+    }
 }

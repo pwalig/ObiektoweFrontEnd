@@ -75,7 +75,7 @@ public class EditFrame extends JDialog {
 
 	public EditFrame(JFrame owner, BoardField host) {
 		// setup
-		super(owner, "Edit Being");
+		super(owner, "x: " + String.valueOf(host.x) + ", y: " + String.valueOf(host.y));
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
 		// fields
@@ -131,7 +131,7 @@ public class EditFrame extends JDialog {
 			@Override
 			public void actionPerformed(ActionEvent e){
                 try {
-					host.being = GameUtils.getNewBeingOfType(Class.forName(unitTypeDropdown.getSelectedItem().toString()));
+					host.being = GameUtils.getNewBeing(Class.forName(unitTypeDropdown.getSelectedItem().toString()));
 					for (int i = 0; i < fields.length; i++){
 						applyField(fields[i], tfs[i], host.being);
 					}
@@ -151,6 +151,7 @@ public class EditFrame extends JDialog {
 			public void actionPerformed(ActionEvent e){
 				for (int i = 0; i < fields.length; i++){
 					applyField(fields[i], tfs[i], host.being);
+					host.setText(String.valueOf(host.being.owner) + String.valueOf(host.being.getTypeChar()));
 				}
 				dispose();
 			}

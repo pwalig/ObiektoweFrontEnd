@@ -3,6 +3,8 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.json.JSONObject;
+
 import game.application.LabeledComponent;
 import game.application.LabeledComponent.LabelPosition;
 import game.maingame.GameUtils;
@@ -95,7 +97,10 @@ public class MainGameFrame extends JFrame {
         importJSON.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                board.importJSON(GameUtils.ImportJSONObject("test-board.json"));
+                JSONObject j = GameUtils.ImportJSONObject("test-board.json");
+                playersAmountPicker.setValue(j.getInt("players"));
+                boardSize.setValue(j.getInt("size"));
+                board.importJSON(j);
             }
         });
 

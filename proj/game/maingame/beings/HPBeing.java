@@ -55,4 +55,9 @@ public class HPBeing extends Being {
         j.put("armour", this.armour.toJSONObject());
         return j;
     }
+
+    @Override
+    public char getTypeChar() {
+        return 'h';
+    }
 }

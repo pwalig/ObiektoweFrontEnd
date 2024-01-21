@@ -6,6 +6,7 @@ import javax.swing.JFrame;
 
 import org.json.JSONObject;
 
+import game.maingame.GameUtils;
 import game.maingame.beings.Being;
 import game.maingame.beings.JSONAble;
 
@@ -42,7 +43,7 @@ public class BoardField extends JButton implements JSONAble {
     ButtonState buttonState = ButtonState.UNLOCKED;
     String fieldContent;
 
-    public BoardField(int _x, int _y, JFrame owner){
+    public BoardField(JFrame owner, int _x, int _y){
         super();
         x = _x;
         y = _y;
@@ -58,6 +59,18 @@ public class BoardField extends JButton implements JSONAble {
                 else new EditFrame(owner, bf);
             }
         });
+    }
+
+    public BoardField(JFrame owner, JSONObject j){
+        this(owner, j.getInt("x"), j.getInt("y"));
+        this.importJSON(j);
+    }
+
+    public void importJSON(JSONObject j){
+        being = GameUtils.getNewBeing(j);
+        x = j.getInt("x");
+        y = j.getInt("y");
+        setText(String.valueOf(j.getInt("owner")) + (char)j.getInt("type"));
     }
 
     @Override

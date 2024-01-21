@@ -30,13 +30,25 @@ public class GameUtils {
 		return tempFields.toArray(new String[tempFields.size()]);
     }
 
-    public static Being getNewBeingOfType(Class<?> type){
+    public static Being getNewBeing(Class<?> type){
         try {
             Object o = type.getConstructor().newInstance(new Object[] {});
             return (Being)o;
         } catch (Exception e) {
             e.printStackTrace();
             return new Being();
+        }
+    }
+
+    public static Being getNewBeing(JSONObject j){
+        switch ((char)j.getInt("type")) {
+            case 'b':
+                return new Being(j);
+            case 'h':
+                return new HPBeing(j);
+        
+            default:
+                return null;
         }
     }
 

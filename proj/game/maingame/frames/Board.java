@@ -10,9 +10,6 @@ import javax.swing.JPanel;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import game.maingame.beings.Being;
-import game.maingame.beings.HPBeing;
-
 public class Board extends JPanel {
     private JFrame owner;
     private int size;
@@ -22,7 +19,7 @@ public class Board extends JPanel {
         super(new GridLayout(1,1));
         this.owner = owner;
         this.size = 1;
-        add(new BoardField(0, 0, owner));
+        add(new BoardField(owner, 0, 0));
         setMinimumSize(new Dimension(1000, 1000));
     }
     
@@ -43,22 +40,10 @@ public class Board extends JPanel {
             Component c = getComponent(((jo.getInt("x")%size) * size) + jo.getInt("y"));
             BoardField bf;
             if (c instanceof BoardField){
-                System.out.println("found");
                 bf = (BoardField) c;
+                bf.importJSON(jo);
             }
             else continue;
-
-            switch ((char)jo.getInt("type")) {
-                case 'b':
-                    bf.being = new Being(jo);
-                    break;
-                case 'h':
-                    bf.being = new HPBeing(jo);
-                    break;
-            
-                default:
-                    break;
-            }
         }
         
         //repaint(); // unnecessary for some reason
@@ -79,7 +64,7 @@ public class Board extends JPanel {
         setLayout(new GridLayout(size, size));
         for (int i = 0; i < size; i++){
             for (int j = 0; j < size; j++){
-                add(new BoardField(i, j, owner));
+                add(new BoardField(owner, i, j));
             }
         }
         this.size = size;
