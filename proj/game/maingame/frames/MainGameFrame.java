@@ -54,18 +54,6 @@ public class MainGameFrame extends JFrame {
             @Override
             public void stateChanged(ChangeEvent e) {
                 board.playersCount = (Integer) playersAmountPicker.getValue();
-                while(playerBeingCounts.size() < board.playersCount){
-                    playerBeingCounts.add(0);
-                }
-                while (playerBeingCounts.size() > board.playersCount) {
-                    if (playerBeingCounts.getLast() == 0){
-                        playerBeingCounts.removeLast();
-                    }
-                    else {
-                        board.playersCount = playerBeingCounts.size();
-                        playersAmountPicker.setValue((Object) playerBeingCounts.size());
-                    }
-                }
             }
         });
 
