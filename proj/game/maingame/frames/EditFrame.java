@@ -152,7 +152,6 @@ public class EditFrame extends JDialog {
 				for (int i = 0; i < fields.length; i++){
 					applyField(fields[i], tfs[i], host.being);
 				}
-				System.out.print(host.being.getClass().getName());
 				dispose();
 			}
 		});

@@ -5,6 +5,7 @@ import javax.swing.event.ChangeListener;
 
 import game.application.LabeledComponent;
 import game.application.LabeledComponent.LabelPosition;
+import game.maingame.GameUtils;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -15,7 +16,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class MainGameFrame extends JFrame {
-    int playersCount = 1;
     ArrayList<Integer> playerBeingCounts = new ArrayList<Integer>();
     MainGameFrame thisFrame = this;
 
@@ -33,40 +33,31 @@ public class MainGameFrame extends JFrame {
         JSpinner playersAmountPicker = new JSpinner(new SpinnerNumberModel(1, 1, 100, 1));
         JButton export = new JButton("Export");
         JButton exportJSON = new JButton("Export JSON");
+        JButton importJSON = new JButton("Import JSON");
         JButton simulate = new JButton("Simulate");
 
-        JPanel board = new JPanel(new GridLayout(1,1));
-        board.add(new BoardField(0, 0, this));
-        board.setMinimumSize(new Dimension(1000, 1000));
+        Board board = new Board(this);
 
         boardSize.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
-                board.removeAll();
-                board.setLayout(new GridLayout((Integer) boardSize.getValue(), (Integer) boardSize.getValue()));
-                for (int i = 0; i < (Integer) boardSize.getValue(); i++){
-                    for (int j = 0; j < (Integer) boardSize.getValue(); j++){
-                        board.add(new BoardField(i, j, thisFrame));
-                    }
-                }
-                board.repaint();
-                setVisible(true);
+                board.resize((Integer) boardSize.getValue());
             }
         });
 
         playersAmountPicker.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
-                playersCount = (Integer) playersAmountPicker.getValue();
-                while(playerBeingCounts.size() < playersCount){
+                board.playersCount = (Integer) playersAmountPicker.getValue();
+                while(playerBeingCounts.size() < board.playersCount){
                     playerBeingCounts.add(0);
                 }
-                while (playerBeingCounts.size() > playersCount) {
+                while (playerBeingCounts.size() > board.playersCount) {
                     if (playerBeingCounts.getLast() == 0){
                         playerBeingCounts.removeLast();
                     }
                     else {
-                        playersCount = playerBeingCounts.size();
+                        board.playersCount = playerBeingCounts.size();
                         playersAmountPicker.setValue((Object) playerBeingCounts.size());
                     }
                 }
@@ -83,8 +74,7 @@ public class MainGameFrame extends JFrame {
                     FileWriter writer = new FileWriter("boardState.txt");
                     writer.write(boardSize.getValue().toString() + " ");
                     writer.write(playersAmountPicker.getValue().toString() + "\n");
-                    for (Component c : board.getComponents()) {
-                        BoardField bf = (BoardField) c;
+                    for (BoardField bf : board.getBoardFields()) {
                         if (bf.fieldContent != null && !bf.fieldContent.isEmpty()) writer.write("" + bf.being.priority + " " + bf.x + " " + " " + bf.y + bf.fieldContent + "\n");
                     }
                     writer.close();
@@ -95,6 +85,20 @@ public class MainGameFrame extends JFrame {
             }
         });
 
+        exportJSON.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                GameUtils.ExportJSONObject(board.toJSONObject(), "test-board.json");
+            }
+        });
+
+        importJSON.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                board.importJSON(GameUtils.ImportJSONObject("test-board.json"));
+            }
+        });
+
         JPanel actions = new JPanel(new GridLayout(0, 1));
         actions.add(levels);
         actions.add(clearBoard);
@@ -102,6 +106,7 @@ public class MainGameFrame extends JFrame {
         actions.add(new LabeledComponent(boardSize, "Board Size: ", LabelPosition.LEFT));
         actions.add(export);
         actions.add(exportJSON);
+        actions.add(importJSON);
         actions.add(simulate);
 
         add(BorderLayout.WEST, actions);
