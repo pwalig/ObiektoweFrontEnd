@@ -2,8 +2,6 @@ package game.maingame.beings;
 
 import org.json.JSONObject;
 
-import game.maingame.beings.HPBeing;
-
 public class Knight extends HPBeing {
     public int baseDamage;
 

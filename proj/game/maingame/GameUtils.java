@@ -10,6 +10,8 @@ import java.util.Scanner;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import game.maingame.beings.Archer;
+import game.maingame.beings.Knight;
 import game.maingame.beings.Being;
 import game.maingame.beings.HPBeing;
 import game.maingame.beings.MoveAble;
@@ -21,7 +23,9 @@ public class GameUtils {
     public static Class<?>[] beingClasses = {
         Being.class,
         HPBeing.class,
-        MoveAble.class
+        MoveAble.class,
+        Archer.class,
+        Knight.class
     };
 
     public static String[] getBeingClassesNames (){
@@ -48,6 +52,12 @@ public class GameUtils {
                 return new Being(j);
             case 'h':
                 return new HPBeing(j);
+            case 'm':
+                return new MoveAble(j);
+            case 'a':
+                return new Archer(j);
+            case 'k':
+                return new Knight(j);
         
             default:
                 return null;

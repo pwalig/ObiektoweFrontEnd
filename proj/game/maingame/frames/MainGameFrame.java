@@ -81,14 +81,14 @@ public class MainGameFrame extends JFrame {
         exportJSON.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                GameUtils.ExportJSONObject(board.toJSONObject(), "test-board.json");
+                GameUtils.ExportJSONObject(board.toJSONObject(), "out.json");
             }
         });
 
         importJSON.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JSONObject j = GameUtils.ImportJSONObject("test-board.json");
+                JSONObject j = GameUtils.ImportJSONObject("in.json");
                 playersAmountPicker.setValue(j.getInt("players"));
                 boardSize.setValue(j.getInt("size"));
                 board.importJSON(j);
@@ -117,9 +117,10 @@ public class MainGameFrame extends JFrame {
         simulate.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                GameUtils.ExportJSONObject(board.toJSONObject(), "out.json");
                 ArrayList<String> args = new ArrayList<String>();
                 args.add ("./backend.exe"); // command name
-                //args.add (); // optional args added as separate list items
+                args.add ("out.json"); // optional args added as separate list items
                 ProcessBuilder pb = new ProcessBuilder (args);
                 Process p;
                 try {
