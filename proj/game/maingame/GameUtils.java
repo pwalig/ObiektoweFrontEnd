@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import game.maingame.beings.Archer;
 import game.maingame.beings.Knight;
 import game.maingame.beings.Being;
+import game.maingame.beings.Fighter;
 import game.maingame.beings.HPBeing;
 import game.maingame.beings.MoveAble;
 
@@ -25,7 +26,8 @@ public class GameUtils {
         HPBeing.class,
         MoveAble.class,
         Archer.class,
-        Knight.class
+        Knight.class,
+        Fighter.class
     };
 
     public static String[] getBeingClassesNames (){
